@@ -1,820 +1,230 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>VNVNC COIN MANIA</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VNVNC EMOJI FRENZY</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
     <style>
         body {
-            background-color: #000000;
-            color: #ffffff;
-            font-family: 'Orbitron', sans-serif;
+            font-family: Arial, sans-serif;
+            background-color: #000;
+            color: #fff;
             margin: 0;
-            padding: 0;
+            padding: 20px;
             display: flex;
-            justify-content: center;
+            flex-direction: column;
             align-items: center;
+            justify-content: center;
             min-height: 100vh;
-            overflow: hidden;
-        }
-
-        #gameContainer {
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(10px);
-            border-radius: 20px;
-            padding: 20px;
-            box-shadow: 0 8px 32px rgba(255, 255, 255, 0.1);
-            width: 100%;
-            max-width: 100vw;
-            height: 100vh;
-            max-height: 100vh;
             box-sizing: border-box;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
         }
-        
-        #title {
-            font-size: 28px;
-            font-weight: 700;
-            text-align: center;
-            margin-bottom: 10px;
-            color: #ff0000;
-            padding: 10px;
-            border-radius: 10px;
-            background: linear-gradient(45deg, #4a0000, #8a0000);
-            box-shadow: 0 0 15px rgba(255, 0, 0, 0.5);
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
-        }
-
-        #scoreContainer {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 10px;
-            margin-top: 10px;
-        }
-
-        #score {
-            font-family: 'Roboto', sans-serif;
-            font-size: 36px;
-            font-weight: bold;
-            margin: 5px 0;
-            padding: 10px 20px;
-            border: 3px solid #ffd700;
-            border-radius: 15px;
-            background: rgba(255, 215, 0, 0.2);
-            color: #ffd700;
-        }
-
-        #coinContainer {
-            width: 80vw;
-            height: 80vw;
-            max-width: 300px;
-            max-height: 300px;
-            perspective: 1000px;
-            margin: 20px auto;
-            cursor: pointer;
-        }
-
-        #coin {
+        .game-container {
             width: 100%;
-            height: 100%;
-            position: relative;
-            transform-style: preserve-3d;
-            transition: transform 0.3s;
-        }
-
-        #coin .front, #coin .back {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            backface-visibility: hidden;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 0 20px rgba(255,215,0,0.5);
-            overflow: hidden;
-            background: radial-gradient(circle at 30% 30%, #ffd700, #ffa500);
-        }
-
-        #coin .front::before, #coin .back::before {
-            content: '';
-            position: absolute;
-            width: 90%;
-            height: 90%;
-            border-radius: 50%;
-            border: 5px solid #ffd700;
-            box-shadow: inset 0 0 20px rgba(255,215,0,0.5);
-        }
-
-        #coin .back {
-            transform: rotateY(180deg);
-        }
-
-        #coin .logo {
-            width: 70%;
-            height: 70%;
-            object-fit: contain;
-        }
-
-        #coin.tapped {
-            animation: coinPress 0.3s ease-out;
-        }
-
-        @keyframes coinPress {
-            0% { transform: scale(1) rotateX(0) rotateY(0); }
-            50% { transform: scale(0.95) rotateX(var(--tilt-x)) rotateY(var(--tilt-y)) translateY(10px); }
-            100% { transform: scale(1) rotateX(0) rotateY(0); }
-        }
-
-        #progressBar {
-            width: 80%;
-            height: 30px;
-            background-color: #333;
-            border-radius: 15px;
-            margin: 10px auto;
-            overflow: hidden;
-            position: relative;
-        }
-
-        #progress {
-            width: 100%;
-            height: 100%;
-            background-color: #ffd700;
-            transition: width 0.5s;
-        }
-
-        #tappingPoints {
-            font-family: 'Roboto', sans-serif;
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            font-weight: bold;
-            color: #000;
-            white-space: nowrap;
-        }
-
-        #pages {
-            display: flex;
-            justify-content: center;
-            width: 100%;
-            margin-top: 20px;
-        }
-
-        .page-button {
-            padding: 12px 24px;
-            font-size: 18px;
-            background: linear-gradient(45deg, #ffd700, #ffa500);
-            border: none;
-            border-radius: 8px;
-            color: #000000;
-            cursor: pointer;
-            margin: 0 10px;
-            transition: transform 0.1s;
-            font-family: 'Orbitron', sans-serif;
-            font-weight: bold;
-        }
-
-        .page-button:active {
-            transform: scale(0.95);
-        }
-
-        #bonusPage, #rulesPage, #emojiFrenzyPage {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background-color: rgba(0, 0, 0, 0.9);
+            max-width: 400px;
+            background: linear-gradient(145deg, #1a1a1a, #2a2a2a);
             border-radius: 20px;
             padding: 20px;
-            box-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
-            z-index: 1000;
-            display: none;
-            width: 90%;
-            max-width: 400px;
-            max-height: 80vh;
-            overflow-y: auto;
-        }
-
-        #bonusTitle {
-            font-size: 24px;
+            box-shadow: 0 0 20px rgba(255, 0, 0, 0.3);
             text-align: center;
-            margin-bottom: 20px;
-            color: #ffd700;
         }
-
-        #dailyCheckinButton {
-            width: 100%;
-            padding: 15px;
+        h1 {
+            font-size: 24px;
+            margin-bottom: 20px;
+            text-shadow: 0 0 10px rgba(255, 0, 0, 0.7);
+        }
+        .score {
             font-size: 18px;
-            background: linear-gradient(45deg, #ffd700, #ffa500);
-            border: none;
-            border-radius: 8px;
-            color: #000000;
-            cursor: pointer;
-            margin: 10px 0;
-            transition: transform 0.1s, opacity 0.3s;
-            font-family: 'Orbitron', sans-serif;
-            font-weight: bold;
+            margin-bottom: 15px;
         }
-
-        #dailyCheckinButton:active {
-            transform: scale(0.95);
-        }
-
-        #dailyCheckinButton:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-
-        #rulesPage h2 {
-            color: #ffd700;
-            text-align: center;
+        .slot-machine {
+            background: #111;
+            border-radius: 10px;
+            padding: 20px;
             margin-bottom: 20px;
+            overflow: hidden;
+            position: relative;
         }
-
-        #rulesPage ol {
-            padding-left: 20px;
+        .reels {
+            display: flex;
+            justify-content: space-around;
         }
-
-        #rulesPage li {
-            margin-bottom: 10px;
-            color: #ffd700;
+        .reel {
+            width: 80px;
+            height: 240px;
+            overflow: hidden;
+            position: relative;
         }
-
-        #notification {
-            position: fixed;
-            top: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            background-color: rgba(255, 215, 0, 0.9);
-            color: #000;
-            padding: 10px 20px;
-            border-radius: 5px;
-            z-index: 1000;
-            display: none;
-            font-family: 'Orbitron', sans-serif;
-        }
-
-        .tap-animation {
-            position: fixed;
-            font-size: 24px;
-            font-weight: bold;
-            color: #ff0000;
-            pointer-events: none;
-            animation: fadeUp 1s ease-out;
-            z-index: 1000;
-        }
-
-        @keyframes fadeUp {
-            0% { opacity: 1; transform: translateY(0); }
-            100% { opacity: 0; transform: translateY(-50px); }
-        }
-
-        .firework {
-            position: fixed;
-            width: 5px;
-            height: 5px;
-            border-radius: 50%;
-            pointer-events: none;
-            animation: explode 1s ease-out forwards, twinkle 0.5s ease-in-out infinite alternate;
-        }
-
-        @keyframes explode {
-            0% { transform: scale(0); opacity: 1; }
-            100% { transform: scale(20); opacity: 0; }
-        }
-
-        @keyframes twinkle {
-            from { opacity: 1; }
-            to { opacity: 0.5; }
-        }
-
-        /* Emoji Frenzy Styles */
-        #emojiFrenzyContainer {
+        .reel-strip {
+            position: absolute;
+            top: 0;
+            left: 0;
             width: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+        .reel-item {
+            height: 80px;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 60px;
+            background: #2a2a2a;
+        }
+        .scoring-lines {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
             height: 100%;
             display: flex;
             flex-direction: column;
-            align-items: center;
-            justify-content: center;
+            justify-content: space-between;
+            pointer-events: none;
         }
-
-        #emojiFrenzyTitle {
-            font-size: 24px;
-            margin-bottom: 20px;
-            color: #ffd700;
+        .scoring-line {
+            width: 100%;
+            height: 2px;
+            background-color: rgba(255, 255, 255, 0.3);
         }
-
-        #emojiDisplay {
-            font-size: 72px;
-            margin-bottom: 20px;
+        .scoring-line.center {
+            background-color: red;
+            height: 3px;
         }
-
-        #emojiButtons {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 10px;
-            margin-bottom: 20px;
-        }
-
-        .emojiButton {
-            font-size: 36px;
-            padding: 10px;
-            background-color: #333;
+        .spin-button {
+            background-color: #ff0000;
+            color: white;
             border: none;
-            border-radius: 10px;
+            padding: 15px 30px;
+            font-size: 18px;
+            border-radius: 50px;
             cursor: pointer;
-            transition: transform 0.1s;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            box-shadow: 0 5px 15px rgba(255, 0, 0, 0.4);
         }
-
-        .emojiButton:active {
-            transform: scale(0.95);
+        .spin-button:hover {
+            background-color: #ff3333;
+            box-shadow: 0 7px 20px rgba(255, 0, 0, 0.6);
         }
-
-        #emojiFrenzyScore {
-            font-size: 24px;
-            margin-bottom: 20px;
-            color: #ffd700;
+        @keyframes spin {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(-50%); }
+        }
+        @media (max-width: 480px) {
+            .game-container {
+                padding: 10px;
+            }
+            .reel {
+                width: 60px;
+                height: 180px;
+            }
+            .reel-item {
+                height: 60px;
+                font-size: 40px;
+            }
         }
     </style>
 </head>
 <body>
-    <div id="gameContainer">
-        <div id="title">VNVNC COIN MANIA</div>
-        <div id="scoreContainer">
-            <div id="score">0⭐️</div>
-        </div>
-        <div id="coinContainer">
-            <div id="coin">
-                <div class="front">
-                    <img src="https://i.ibb.co/LtYGRH6/vnvnc-logo-outline-copy.png" alt="VNVNC Logo" class="logo">
-                </div>
-                <div class="back">
-                    <img src="https://i.ibb.co/LtYGRH6/vnvnc-logo-outline-copy.png" alt="VNVNC Logo" class="logo">
-                </div>
+    <div class="game-container">
+        <h1>VNVNC EMOJI FRENZY</h1>
+        <div class="score">Stars: <span id="score">500 ⭐</span></div>
+        <div class="slot-machine">
+            <div class="reels" id="slotMachine">
+                <div class="reel"><div class="reel-strip" id="reel1"></div></div>
+                <div class="reel"><div class="reel-strip" id="reel2"></div></div>
+                <div class="reel"><div class="reel-strip" id="reel3"></div></div>
+            </div>
+            <div class="scoring-lines">
+                <div class="scoring-line"></div>
+                <div class="scoring-line center"></div>
+                <div class="scoring-line"></div>
             </div>
         </div>
-        <div id="progressBar">
-            <div id="progress"></div>
-            <div id="tappingPoints">1000⭐️</div>
-        </div>
-        <div id="pages">
-            <button class="page-button" onclick="showPage('bonusPage')">Bonus 🎁</button>
-            <button class="page-button" onclick="showPage('emojiFrenzyPage')">Emoji Frenzy 🎭</button>
-            <button class="page-button" onclick="showPage('rulesPage')">Rules 📋</button>
-        </div>
+        <button class="spin-button" onclick="spin()">SPIN</button>
     </div>
-    <div id="bonusPage">
-        <div id="bonusTitle">Ежедневный чекин</div>
-        <button id="dailyCheckinButton">Получить 5000⭐️</button>
-        <button class="page-button" onclick="showPage('mainPage')">Назад</button>
-    </div>
-    <div id="rulesPage">
-        <h2>Правила VNVNC COIN MANIA</h2>
-        <ol>
-            <li>Тапай на монетку, чтобы заработать ⭐️</li>
-            <li>Используйте ежедневный чекин, чтобы получить 5000 очков тапа.</li>
-            <li>Запас ⭐️ для собирания пополняется только через него.</li>
-            <li>Ждите анонсов от VNVNC об обмене ⭐️!</li>
-            <li>Играйте в Emoji Frenzy, чтобы заработать дополнительные ⭐️!</li>
-        </ol>
-        <button class="page-button" onclick="showPage('mainPage')">Назад</button>
-    </div>
-  <div id="emojiFrenzyPage">
-    <h1>VNVNC EMOJI FRENZY</h1>
-    <div class="score">Stars: <span id="emojiFrenzyScore">500 ⭐</span></div>
-    <div class="slot-machine">
-        <div class="reels" id="emojiFrenzySlotMachine">
-            <div class="reel"><div class="reel-strip" id="emojiFrenzyReel1"></div></div>
-            <div class="reel"><div class="reel-strip" id="emojiFrenzyReel2"></div></div>
-            <div class="reel"><div class="reel-strip" id="emojiFrenzyReel3"></div></div>
-        </div>
-        <div class="scoring-lines">
-            <div class="scoring-line"></div>
-            <div class="scoring-line center"></div>
-            <div class="scoring-line"></div>
-        </div>
-    </div>
-    <button class="spin-button" onclick="spinEmojiFrenzy()">SPIN</button>
-    <button class="page-button" onclick="showPage('mainPage')">Назад</button>
-</div>
-    <div id="notification"></div>
-</body>
-<script>
-let tg = window.Telegram.WebApp;
-tg.expand();
 
-let score = 0;
-let tappingPoints = 1000;
-let lastDailyCheckin = 0;
-let ws;
-let updateTimeout = null;
+    <script>
+        let score = 500;
+        const emojis = ['🎉', '🎊', '🎈', '🎁', '🕺', '💃', '🍾', '🥂'];
+        const scoreElement = document.getElementById('score');
+        const reels = [
+            document.getElementById('reel1'),
+            document.getElementById('reel2'),
+            document.getElementById('reel3')
+        ];
+        const itemHeight = 80;
+        const itemsPerReel = 40;
 
-const scoreElement = document.getElementById('score');
-const coinElement = document.getElementById('coin');
-const progressElement = document.getElementById('progress');
-const tappingPointsElement = document.getElementById('tappingPoints');
-const coinContainer = document.getElementById('coinContainer');
-const dailyCheckinButton = document.getElementById('dailyCheckinButton');
-
-function connectWebSocket() {
-    const chatId = tg.initDataUnsafe.user.id;
-    console.log('Connecting WebSocket with chatId:', chatId);
-    ws = new WebSocket(`wss://sunrise-tundra-glass.glitch.me?chatId=${chatId}`);
-    
-    ws.onopen = () => {
-        console.log('WebSocket connected');
-        ws.send(JSON.stringify({ type: 'getScore' }));
-    };
-    
-    ws.onmessage = (event) => {
-        console.log('Received WebSocket message:', event.data);
-        const data = JSON.parse(event.data);
-        if (data.type === 'initData' || data.type === 'dataUpdate') {
-            updateScoreDisplay(data.score);
-            updateTappingPointsDisplay(data.tappingPoints);
-            lastDailyCheckin = data.lastDailyCheckin || 0;
-            updateDailyCheckinButton();
-        }
-    };
-    
-    ws.onclose = () => {
-        console.log('WebSocket disconnected. Reconnecting...');
-        setTimeout(connectWebSocket, 1000);
-    };
-
-    ws.onerror = (error) => {
-        console.error('WebSocket error:', error);
-    };
-}
-
-function updateScoreDisplay(newScore) {
-    score = Math.max(score, parseInt(newScore));
-    scoreElement.textContent = score + '⭐️';
-    console.log('Score display updated:', score);
-}
-
-function updateTappingPointsDisplay(newPoints) {
-    tappingPoints = parseInt(newPoints);
-    updateProgress();
-    console.log('Tapping points updated:', tappingPoints);
-}
-
-async function updateScore() {
-    score += 1;
-    tappingPoints = Math.max(0, tappingPoints - 1);
-    
-    updateScoreDisplay(score);
-    updateProgress();
-    
-    if (updateTimeout) {
-        clearTimeout(updateTimeout);
-    }
-    
-    updateTimeout = setTimeout(() => {
-        if (ws && ws.readyState === WebSocket.OPEN) {
-            console.log('Sending score and tapping points update:', score, tappingPoints);
-            ws.send(JSON.stringify({ type: 'updateScoreAndPoints', score: score, tappingPoints: tappingPoints }));
-        } else {
-            console.error('WebSocket is not open. Update failed.');
-            updateScoreHTTP(score, tappingPoints);
-        }
-    }, 300);
-    
-    checkMilestones();
-}
-
-async function updateScoreHTTP(newScore, newTappingPoints) {
-    try {
-        const response = await fetch('https://sunrise-tundra-glass.glitch.me/bot', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                message: {
-                    chat: { id: tg.initDataUnsafe.user.id },
-                    text: `/setscore ${newScore} ${newTappingPoints}`
+        function populateReels() {
+            reels.forEach(reel => {
+                for (let i = 0; i < itemsPerReel; i++) {
+                    const div = document.createElement('div');
+                    div.className = 'reel-item';
+                    div.textContent = emojis[i % emojis.length];
+                    reel.appendChild(div);
                 }
-            })
-        });
-        const data = await response.json();
-        if (data.ok) {
-            console.log('Score and tapping points updated via HTTP:', newScore, newTappingPoints);
-        } else {
-            console.error('Failed to update score and tapping points via HTTP:', data.description);
-        }
-    } catch (error) {
-        console.error('Error updating score and tapping points via HTTP:', error);
-    }
-}
-
-function checkMilestones() {
-    const milestones = [100, 500, 1000, 5000, 10000];
-    if (milestones.includes(score)) {
-        showNotification(`Поздравляем! Вы достигли ${score} звезд!`);
-    }
-}
-
-function updateProgress() {
-    const percentage = (tappingPoints / 1000) * 100;
-    progressElement.style.width = Math.min(100, percentage) + '%';
-    tappingPointsElement.textContent = tappingPoints + '⭐️';
-}
-
-function createTapAnimation(x, y) {
-    const animation = document.createElement('div');
-    animation.className = 'tap-animation';
-    animation.textContent = '+1⭐️';
-    animation.style.left = `${x}px`;
-    animation.style.top = `${y}px`;
-    document.body.appendChild(animation);
-    setTimeout(() => animation.remove(), 1000);
-}
-
-function animateCoin(x, y) {
-    const rect = coinContainer.getBoundingClientRect();
-    const centerX = rect.left + rect.width / 2;
-    const centerY = rect.top + rect.height / 2;
-    
-    const tiltX = (y - centerY) / (rect.height / 2) * 20;
-    const tiltY = (x - centerX) / (rect.width / 2) * 20;
-    
-    coinElement.style.setProperty('--tilt-x', `${tiltX}deg`);
-    coinElement.style.setProperty('--tilt-y', `${tiltY}deg`);
-    
-    coinElement.classList.add('tapped');
-    setTimeout(() => coinElement.classList.remove('tapped'), 300);
-}
-
-function showPage(pageId) {
-    const pages = ['mainPage', 'bonusPage', 'rulesPage', 'emojiFrenzyPage'];
-    pages.forEach(page => {
-        const element = document.getElementById(page);
-        if (element) {
-            element.style.display = page === pageId ? 'block' : 'none';
-        }
-    });
-    
-    if (pageId === 'mainPage') {
-        document.getElementById('gameContainer').style.display = 'flex';
-    } else {
-        document.getElementById('gameContainer').style.display = 'none';
-    }
-
-    if (pageId === 'emojiFrenzyPage') {
-        initializeEmojiFrenzy();
-    }
-}
-
-async function performDailyCheckin() {
-  try {
-    const now = new Date();
-    const timestamp = now.toISOString().slice(0, 10);
-    const userId = tg.initDataUnsafe.user.id;
-
-    const response = await fetch('https://sunrise-tundra-glass.glitch.me/bot', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        message: {
-          chat: { id: userId },
-          text: `/dailycheckin ${timestamp}`
-        }
-      }),
-    });
-
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-
-    const data = await response.json();
-
-    if (data.ok) {
-      showNotification(data.result);
-      tappingPoints += 5000;
-      updateTappingPointsDisplay(tappingPoints);
-      lastDailyCheckin = now.getTime();
-      updateDailyCheckinButton();
-      localStorage.setItem(`lastDailyCheckin_${userId}`, lastDailyCheckin.toString());
-    } else {
-      showNotification(data.error || 'Не удалось выполнить ежедневный чекин. Пожалуйста, попробуйте позже.');
-    }
-  } catch (error) {
-    console.error('Error performing daily check-in:', error);
-    showNotification('Ошибка при выполнении ежедневного чекина. Пожалуйста, проверьте подключение.');
-  }
-}
-
-function updateDailyCheckinButton() {
-  const now = Date.now();
-  const timeSinceLastCheckin = now - lastDailyCheckin;
-  const cooldownPeriod = 24 * 60 * 60 * 1000;
-
-  if (timeSinceLastCheckin >= cooldownPeriod) {
-    dailyCheckinButton.disabled = false;
-    dailyCheckinButton.textContent = 'Получить 5000⭐️';
-  } else {
-    dailyCheckinButton.disabled = true;
-    const timeLeft = cooldownPeriod - timeSinceLastCheckin;
-    const hoursLeft = Math.floor(timeLeft / (60 * 60 * 1000));
-    const minutesLeft = Math.floor((timeLeft % (60 * 60 * 1000)) / (60 * 1000));
-    dailyCheckinButton.textContent = `Доступно через ${hoursLeft}ч ${minutesLeft}м`;
-  }
-}
-
-function showNotification(message) {
-    const notification = document.getElementById('notification');
-    notification.textContent = message;
-    notification.style.display = 'block';
-    setTimeout(() => {
-        notification.style.display = 'none';
-    }, 3000);
-}
-
-function adjustLayout() {
-    const gameContainer = document.getElementById('gameContainer');
-    const coinContainer = document.getElementById('coinContainer');
-    const aspectRatio = window.innerHeight / window.innerWidth;
-
-    if (aspectRatio < 1.5) {
-        gameContainer.style.flexDirection = 'row';
-        gameContainer.style.justifyContent = 'space-around';
-        coinContainer.style.width = '40vw';
-        coinContainer.style.height = '40vw';
-    } else {
-        gameContainer.style.flexDirection = 'column';
-        gameContainer.style.justifyContent = 'center';
-        coinContainer.style.width = '80vw';
-        coinContainer.style.height = '80vw';
-    }
-
-    const maxDimension = Math.min(300, window.innerWidth * 0.8, window.innerHeight * 0.5);
-    coinContainer.style.maxWidth = `${maxDimension}px`;
-    coinContainer.style.maxHeight = `${maxDimension}px`;
-}
-
-window.addEventListener('load', adjustLayout);
-window.addEventListener('resize', adjustLayout);
-
-async function initializeApp() {
-    connectWebSocket();
-    await new Promise(resolve => {
-        const timeout = setTimeout(() => {
-            console.log('WebSocket connection timed out, falling back to HTTP');
-            fetchScoreHTTP();
-            resolve();
-        }, 3000);
-
-        ws.onopen = () => {
-            clearTimeout(timeout);
-            ws.send(JSON.stringify({ type: 'getScore' }));
-            resolve();
-        };
-    });
-
-    updateProgress();
-    showPage('mainPage');
-    updateDailyCheckinButton();
-    adjustLayout();
-    initializeEmojiFrenzy();
-}
-
-document.addEventListener('DOMContentLoaded', initializeApp);
-
-coinContainer.addEventListener('click', async (e) => {
-    if (tappingPoints > 0) {
-        await updateScore();
-        updateProgress();
-        createTapAnimation(e.clientX, e.clientY);
-        animateCoin(e.clientX, e.clientY);
-        
-        for (let i = 0; i < 10; i++) {
-            const offsetX = (Math.random() - 0.5) * 100;
-            const offsetY = (Math.random() - 0.5) * 100;
-            createSparkle(e.clientX + offsetX, e.clientY + offsetY);
+                for (let i = 0; i < itemsPerReel / 2; i++) {
+                    const div = reel.children[i].cloneNode(true);
+                    reel.appendChild(div);
+                }
+            });
         }
 
-        tg.HapticFeedback.impactOccurred('medium');
-    } else {
-        showNotification("Нет очков тапа! Дождитесь ежедневного чекина.");
-    }
-});
+        populateReels();
 
-dailyCheckinButton.addEventListener('click', performDailyCheckin);
+        function spin() {
+            if (score < 10) {
+                alert("Not enough stars to spin!");
+                return;
+            }
+            score -= 10;
+            updateScore();
 
-tg.onEvent('viewportChanged', function(isStateStable) {
-    if (!isStateStable) {
-        if (ws && ws.readyState === WebSocket.OPEN) {
-            ws.send(JSON.stringify({ type: 'updateScoreAndPoints', score: score, tappingPoints: tappingPoints }));
-        } else {
-            updateScoreHTTP(score, tappingPoints);
+            reels.forEach((reel, index) => {
+                const delay = index * 0.5;
+                const initialDuration = 2;
+                const slowdownDuration = 4 + Math.random() * 2;
+
+                reel.style.animation = 'none';
+                reel.offsetHeight; // Trigger reflow
+
+                reel.style.animation = `spin ${initialDuration}s linear infinite`;
+
+                setTimeout(() => {
+                    const stopPosition = -Math.floor(Math.random() * (itemsPerReel / 2)) * itemHeight;
+                    reel.style.animation = 'none';
+                    reel.style.transition = `transform ${slowdownDuration}s cubic-bezier(.5, 0, .5, 1)`;
+                    reel.style.transform = `translateY(${stopPosition}px)`;
+                }, (initialDuration + delay) * 1000);
+            });
+
+            setTimeout(checkResult, 8000);
         }
-    }
-    adjustLayout();
-});
 
-function createSparkle(x, y) {
-    const sparkle = document.createElement('div');
-    sparkle.className = 'firework';
-    sparkle.style.left = `${x}px`;
-    sparkle.style.top = `${y}px`;
-    sparkle.style.backgroundColor = `hsl(${Math.random() * 360}, 100%, 50%)`;
-    document.body.appendChild(sparkle);
-    setTimeout(() => sparkle.remove(), 1000);
-}
+        function checkResult() {
+            const results = reels.map(reel => {
+                const translateY = getComputedStyle(reel).transform.split(',')[5].slice(0, -1);
+                const activeIndex = (Math.abs(Math.round(translateY / itemHeight)) + 1) % (itemsPerReel / 2);
+                return reel.children[activeIndex].textContent;
+            });
 
-// Emoji Frenzy Game
-let emojiFrenzyScore = 500;
-const emojis = ['🎉', '🎊', '🎈', '🎁', '🕺', '💃', '🍾', '🥂'];
-const emojiFrenzyScoreElement = document.getElementById('emojiFrenzyScore');
-const emojiFrenzyReels = [
-    document.getElementById('emojiFrenzyReel1'),
-    document.getElementById('emojiFrenzyReel2'),
-    document.getElementById('emojiFrenzyReel3')
-];
-const itemHeight = 80;
-const itemsPerReel = 40;
-
-function initializeEmojiFrenzy() {
-    populateEmojiFrenzyReels();
-    updateEmojiFrenzyScore();
-}
-
-function populateEmojiFrenzyReels() {
-    emojiFrenzyReels.forEach(reel => {
-        reel.innerHTML = ''; // Clear existing content
-        for (let i = 0; i < itemsPerReel; i++) {
-            const div = document.createElement('div');
-            div.className = 'reel-item';
-            div.textContent = emojis[i % emojis.length];
-            reel.appendChild(div);
+            if (results[0] === results[1] && results[1] === results[2]) {
+                score += 100;
+                setTimeout(() => alert("Jackpot! You won 100 stars! 🌟"), 100);
+            }
+            updateScore();
         }
-        for (let i = 0; i < itemsPerReel / 2; i++) {
-            const div = reel.children[i].cloneNode(true);
-            reel.appendChild(div);
+
+        function updateScore() {
+            scoreElement.textContent = `${score} ⭐`;
         }
-    });
-}
 
-function spinEmojiFrenzy() {
-    if (emojiFrenzyScore < 10) {
-        alert("Not enough stars to spin!");
-        return;
-    }
-    emojiFrenzyScore -= 10;
-    updateEmojiFrenzyScore();
-
-    emojiFrenzyReels.forEach((reel, index) => {
-        const delay = index * 0.5;
-        const initialDuration = 2;
-        const slowdownDuration = 4 + Math.random() * 2;
-
-        reel.style.animation = 'none';
-        reel.offsetHeight; // Trigger reflow
-
-        reel.style.animation = `spin ${initialDuration}s linear infinite`;
-
-        setTimeout(() => {
-            const stopPosition = -Math.floor(Math.random() * (itemsPerReel / 2)) * itemHeight;
-            reel.style.animation = 'none';
-            reel.style.transition = `transform ${slowdownDuration}s cubic-bezier(.5, 0, .5, 1)`;
-            reel.style.transform = `translateY(${stopPosition}px)`;
-        }, (initialDuration + delay) * 1000);
-    });
-
-    setTimeout(checkEmojiFrenzyResult, 8000);
-}
-
-function checkEmojiFrenzyResult() {
-    const results = emojiFrenzyReels.map(reel => {
-        const translateY = getComputedStyle(reel).transform.split(',')[5].slice(0, -1);
-        const activeIndex = (Math.abs(Math.round(translateY / itemHeight)) + 1) % (itemsPerReel / 2);
-        return reel.children[activeIndex].textContent;
-    });
-
-    if (results[0] === results[1] && results[1] === results[2]) {
-        emojiFrenzyScore += 100;
-        setTimeout(() => alert("Jackpot! You won 100 stars! 🌟"), 100);
-    }
-    updateEmojiFrenzyScore();
-}
-
-function updateEmojiFrenzyScore() {
-    emojiFrenzyScoreElement.textContent = `${emojiFrenzyScore} ⭐`;
-}
-
-// Initialize Telegram Mini App
-window.Telegram.WebApp.ready();
-</script>
+        // Initialize Telegram Mini App
+        window.Telegram.WebApp.ready();
+    </script>
 </body>
 </html>
