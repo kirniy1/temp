@@ -387,15 +387,24 @@
         </ol>
         <button class="page-button" onclick="showPage('mainPage')">Назад</button>
     </div>
-    <div id="emojiFrenzyPage">
-        <div id="emojiFrenzyContainer">
-            <div id="emojiFrenzyTitle">VNVNC EMOJI FRENZY</div>
-            <div id="emojiDisplay">🎉</div>
-            <div id="emojiButtons"></div>
-            <div id="emojiFrenzyScore">Score: 0⭐️</div>
-            <button class="page-button" onclick="showPage('mainPage')">Назад</button>
+  <div id="emojiFrenzyPage">
+    <h1>VNVNC EMOJI FRENZY</h1>
+    <div class="score">Stars: <span id="emojiFrenzyScore">500 ⭐</span></div>
+    <div class="slot-machine">
+        <div class="reels" id="emojiFrenzySlotMachine">
+            <div class="reel"><div class="reel-strip" id="emojiFrenzyReel1"></div></div>
+            <div class="reel"><div class="reel-strip" id="emojiFrenzyReel2"></div></div>
+            <div class="reel"><div class="reel-strip" id="emojiFrenzyReel3"></div></div>
+        </div>
+        <div class="scoring-lines">
+            <div class="scoring-line"></div>
+            <div class="scoring-line center"></div>
+            <div class="scoring-line"></div>
         </div>
     </div>
+    <button class="spin-button" onclick="spinEmojiFrenzy()">SPIN</button>
+    <button class="page-button" onclick="showPage('mainPage')">Назад</button>
+</div>
     <div id="notification"></div>
 </body>
 <script>
@@ -561,7 +570,7 @@ function showPage(pageId) {
     }
 
     if (pageId === 'emojiFrenzyPage') {
-        startEmojiFrenzy();
+        initializeEmojiFrenzy();
     }
 }
 
@@ -725,63 +734,87 @@ function createSparkle(x, y) {
 }
 
 // Emoji Frenzy Game
+let emojiFrenzyScore = 500;
 const emojis = ['🎉', '🎊', '🎈', '🎁', '🕺', '💃', '🍾', '🥂'];
-let currentEmoji;
-let emojiFrenzyScore = 0;
-let emojiFrenzyTimer;
+const emojiFrenzyScoreElement = document.getElementById('emojiFrenzyScore');
+const emojiFrenzyReels = [
+    document.getElementById('emojiFrenzyReel1'),
+    document.getElementById('emojiFrenzyReel2'),
+    document.getElementById('emojiFrenzyReel3')
+];
+const itemHeight = 80;
+const itemsPerReel = 40;
 
 function initializeEmojiFrenzy() {
-    const emojiButtons = document.getElementById('emojiButtons');
-    emojis.forEach(emoji => {
-        const button = document.createElement('button');
-        button.textContent = emoji;
-        button.className = 'emojiButton';
-        button.onclick = () => checkEmoji(emoji);
-        emojiButtons.appendChild(button);
+    populateEmojiFrenzyReels();
+    updateEmojiFrenzyScore();
+}
+
+function populateEmojiFrenzyReels() {
+    emojiFrenzyReels.forEach(reel => {
+        reel.innerHTML = ''; // Clear existing content
+        for (let i = 0; i < itemsPerReel; i++) {
+            const div = document.createElement('div');
+            div.className = 'reel-item';
+            div.textContent = emojis[i % emojis.length];
+            reel.appendChild(div);
+        }
+        for (let i = 0; i < itemsPerReel / 2; i++) {
+            const div = reel.children[i].cloneNode(true);
+            reel.appendChild(div);
+        }
     });
 }
 
-function startEmojiFrenzy() {
-    emojiFrenzyScore = 0;
+function spinEmojiFrenzy() {
+    if (emojiFrenzyScore < 10) {
+        alert("Not enough stars to spin!");
+        return;
+    }
+    emojiFrenzyScore -= 10;
     updateEmojiFrenzyScore();
-    nextEmoji();
-    emojiFrenzyTimer = setInterval(nextEmoji, 2000);
+
+    emojiFrenzyReels.forEach((reel, index) => {
+        const delay = index * 0.5;
+        const initialDuration = 2;
+        const slowdownDuration = 4 + Math.random() * 2;
+
+        reel.style.animation = 'none';
+        reel.offsetHeight; // Trigger reflow
+
+        reel.style.animation = `spin ${initialDuration}s linear infinite`;
+
+        setTimeout(() => {
+            const stopPosition = -Math.floor(Math.random() * (itemsPerReel / 2)) * itemHeight;
+            reel.style.animation = 'none';
+            reel.style.transition = `transform ${slowdownDuration}s cubic-bezier(.5, 0, .5, 1)`;
+            reel.style.transform = `translateY(${stopPosition}px)`;
+        }, (initialDuration + delay) * 1000);
+    });
+
+    setTimeout(checkEmojiFrenzyResult, 8000);
 }
 
-function nextEmoji() {
-    currentEmoji = emojis[Math.floor(Math.random() * emojis.length)];
-    document.getElementById('emojiDisplay').textContent = currentEmoji;
-}
+function checkEmojiFrenzyResult() {
+    const results = emojiFrenzyReels.map(reel => {
+        const translateY = getComputedStyle(reel).transform.split(',')[5].slice(0, -1);
+        const activeIndex = (Math.abs(Math.round(translateY / itemHeight)) + 1) % (itemsPerReel / 2);
+        return reel.children[activeIndex].textContent;
+    });
 
-function checkEmoji(clickedEmoji) {
-    if (clickedEmoji === currentEmoji) {
-        emojiFrenzyScore += 10;
-        showNotification('+10⭐️');
-    } else {
-        emojiFrenzyScore = Math.max(0, emojiFrenzyScore - 5);
-        showNotification('-5⭐️');
+    if (results[0] === results[1] && results[1] === results[2]) {
+        emojiFrenzyScore += 100;
+        setTimeout(() => alert("Jackpot! You won 100 stars! 🌟"), 100);
     }
     updateEmojiFrenzyScore();
-    nextEmoji();
 }
 
 function updateEmojiFrenzyScore() {
-    document.getElementById('emojiFrenzyScore').textContent = `Score: ${emojiFrenzyScore}⭐️`;
+    emojiFrenzyScoreElement.textContent = `${emojiFrenzyScore} ⭐`;
 }
 
-function endEmojiFrenzy() {
-    clearInterval(emojiFrenzyTimer);
-    score += emojiFrenzyScore;
-    updateScoreDisplay(score);
-    if (ws && ws.readyState === WebSocket.OPEN) {
-        ws.send(JSON.stringify({ type: 'updateScoreAndPoints', score: score, tappingPoints: tappingPoints }));
-    } else {
-        updateScoreHTTP(score, tappingPoints);
-    }
-    showNotification(`Игра окончена! Вы заработали ${emojiFrenzyScore}⭐️`);
-}
-
-document.querySelector('#emojiFrenzyPage .page-button').addEventListener('click', endEmojiFrenzy);
+// Initialize Telegram Mini App
+window.Telegram.WebApp.ready();
 </script>
 </body>
 </html>
